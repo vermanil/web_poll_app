@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>details</title>
+</head>
+<body>
+{{ ques.quest }}
+</br>
+<p>posted at</p>
+{{ ques.pub_date }}
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+<br action="{% url 'polls:vote' ques.id %}" method="post">
+    {% csrf_token %}
+    {% for choic in ques.choice_set.all %}
+        <input type="radio" name="choice" id="choic{{ forloop.counter}}" value="{{ choic.id }}" />
+        <label for="choic{{ forloop.counter}}">{{ choic.choice_text}}</label> </br>
+    {% endfor %}
+    <input type="submit" value="vote"/>
+</form>
+</body>
+</html>
