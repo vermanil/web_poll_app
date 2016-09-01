@@ -11,7 +11,7 @@ def index(request):
 def detail(request,ques_id):
     try:
         ques = question.objects.get(pk=ques_id)
-    except:
+    except question.DoesNotExist:
         raise Http404("question Does not exist")
     return render(request, 'polls/details.html',{'ques':ques})
 
@@ -22,17 +22,17 @@ def results(request, ques_id):
 def vote(request, ques_id):
     try:
         ques = question.objects.get(pk=ques_id)
-    except:
+    except question.DoesNotExist:
         raise Http404("Question Does not exist")
     try:
-        select_choice = ques.choice_set.all(pk = request.POST['choic'])
+        select_choice = ques.choice_set.get(pk = request.POST['choic'])
     except (KeyError, choice.DoesNotExist):
         return render(request, 'polls/details.html', {'ques':ques, 'error_message':'you did not select a choice'})
 
     else:
         select_choice.votes += 1
         select_choice.save()
-        return HttpResponseRedirect(reverse('polls/results', args=(ques.id,)))
+        return HttpResponseRedirect(reverse('results', args=(ques.id,)))
 
 def indexing(request):
     latest_ques_list=question.objects.order_by('-pub_date')[:5]
