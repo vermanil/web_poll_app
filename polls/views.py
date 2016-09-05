@@ -2,7 +2,7 @@ from django.http import Http404
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
-from . models import question, choice
+from .models import question, choice
 # Create your views here.
 
 def index(request):
@@ -16,8 +16,11 @@ def detail(request,ques_id):
     return render(request, 'polls/details.html',{'ques':ques})
 
 def results(request, ques_id):
-    response = "You're looking at the results of question %s."
-    return HttpResponse(response % ques_id)
+    try:
+        ques = question.objects.get(pk=ques_id)
+    except question.DoesNotExist:
+        raise Http404("Question Does Not Exist")
+    return render(request, "polls/results.html", {"ques":ques})
 
 def vote(request, ques_id):
     try:
